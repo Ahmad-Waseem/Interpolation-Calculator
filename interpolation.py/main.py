@@ -55,17 +55,21 @@ df = pd.DataFrame(data)
 
 # Calculate and add the differences between consecutive rows
 #
-for zoro in range(3,4):
+for zoro in range(0,1):
     indicator = zoro  #0 si backward, 1 is forward
 
     # Calculate and add the differences between consecutive rows in reverse order
     
+    
+    df, poly, xnr, hr = newton_backward(df, num_of_entries, Xr)
+    delta_ys = get_sigma_ys(df) 
+
+    print(f"\n\n---------\n{xnr} {hr} \n\n")
 
 
-    print(df)
+    degree = num_of_entries
+    print_NB(poly, delta_ys, xnr, hr, Xr, org, num_of_entries, degree)
 
-    print(deltas)
-    print(len(poly))
     # #print("\n\nFormula:")
     # polx = sp.latex(poly[-1])
     # #print(polx)

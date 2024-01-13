@@ -42,9 +42,9 @@ def generate_NB_polynomial(entries, x, xn, h, delta_ys):
 def newton_backward(df, num_of_entries, Xr):
     print("\n=================================>NEWTON BACKWARD\n")
     for i in range(1, num_of_entries):
-        df['∇y_' + str(i)] = df['∇y_' + str(i - 1)].diff()  
+        df['delta_y_' + str(i)] = df['delta_y_' + str(i - 1)].diff()  
 
-    delta_ys = [sp.Symbol('∆y_'+str(i)) for i in range(num_of_entries)]  # Changed to triangular delta symbol (∆)
+    delta_ys = [sp.Symbol('∇y_'+str(i)) for i in range(num_of_entries)]  # Changed to triangular delta symbol (∆)
     X = sp.symbols('X')
     xn = sp.symbols('Xn')
     h = sp.symbols('h')
@@ -57,29 +57,35 @@ def newton_backward(df, num_of_entries, Xr):
     print("Xn = ", xnr)
     print("h = ", h)
 
-    delta_ys = get_sigma_ys(df) 
+    
 
-    return df, delta_ys, poly, xnr, hr
+    return df, poly, xnr, hr
 #Usage: newton_backward(pd, np-ndarray, X to find-double)
 
 
 
 #------------------- Printing
-def print_GB(poly, delta_ys, xnr, hr, Xr, org, num_of_entries, degree):
-    for k in range(1, num_of_entries):
-        print("\n          --------------Equation of Degree", k,  "----------------------------")
-        poly[k] = poly[k].subs([(f'∇y_{i}', delta_ys[i]) for i in range(num_of_entries)])
-        poly[k] = poly[k].subs('xn', xnr)
-        poly[k] = poly[k].subs('h', hr)
+def print_NB(poly, delta_ys, xnr, hr, Xr, org, num_of_entries, degree):
+    
+    k = degree - 1
+    print("\n          -------------- Equation of Degree", k,  " ----------------------------")
+    poly[k] = poly[k].subs([(f'∇y_{i}', delta_ys[i]) for i in range(num_of_entries)])
 
-        print("\n\nReadable non-simplified:")
-        sp.pprint((poly[k]))
-        print("\n\nReadable Simplified-Equation:")
-        sp.pprint(sp.expand(poly[k]))
+    symbolice = sp.sympify(poly[k])
+    print(sp.latex(sp.srepr(symbolice)))
 
-        poly[k] = poly[k].subs('x', Xr)
-        print("\nf(", Xr, ") =", poly[k])
-        print("Original Val =", org)
-        print("Difference =", org - poly[k])
+    poly[k] = poly[k].subs('Xn', xnr)
+    poly[k] = poly[k].subs('h', hr)
+
+    print("\n\nReadable non-simplified:")
+    print(sp.latex(poly[k]))
+    print("\n\nReadable Simplified-Equation:")
+    sp.pprint(sp.latex(sp.expand(poly[k])))
+
+    poly[k] = poly[k].subs('X', Xr)
+
+    print("\nf(", Xr, ") =", poly[k])
+    print("Original Val =", org)
+    print("Difference =", org - poly[k])
 
 # Usage example: print_GB(poly, delta_ys, xnr, hr, Xr, org, num_of_entries)
